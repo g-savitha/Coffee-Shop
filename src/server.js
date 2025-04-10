@@ -4,6 +4,9 @@ const bcrypt = require('bcrypt');
 const { testConnection, sequelize } = require('./config/database');
 const { Staff, Product } = require('./models');
 
+const authRoutes = require('./routes/auth');
+const productRoutes = require('./routes/products');
+
 dotenv.config();
 
 const app = express();
@@ -11,6 +14,10 @@ const PORT = process.env.PORT || 3000;
 
 // middleware
 app.use(express.json())
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
 
 app.get('/', (req, res) => {
   res.send({ message: '☕ Welcome to Coffee Shop Management API!' })
@@ -25,7 +32,6 @@ const initaliseServer = async () => {
     console.log('☕ Database tables created');
 
     // create initial Data
-
     await createInitialData();
     app.listen(PORT, () => {
       console.log(`☕ Coffee Shop server brewing on port ${PORT}`);
