@@ -42,6 +42,7 @@ const Product = sequelize.define('Product', {
 },
   {
     tableName: 'products',
+    schema: 'coffee_shop_schema',
     timestamps: true
   })
 

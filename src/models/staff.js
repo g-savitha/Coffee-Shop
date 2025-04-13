@@ -41,6 +41,7 @@ const Staff = sequelize.define('Staff', {
   }
 }, {
   tableName: 'staff',
+  schema: 'coffee_shop_schema',
   timestamps: true
 })
 
