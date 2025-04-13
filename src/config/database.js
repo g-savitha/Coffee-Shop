@@ -23,7 +23,7 @@ const testConnection = async () => {
     console.log('☕️ Connected to the coffee shop database!');
   }
   catch (err) {
-    console.error('❌ Database connection failed:', error);
+    console.error('❌ Database connection failed:', err);
   }
 }
 
