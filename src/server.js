@@ -30,6 +30,9 @@ app.get('/', (req, res) => {
 const initaliseServer = async () => {
   try {
     await testConnection();
+    console.log('Environment:', process.env.NODE_ENV);
+    // console.log('Is Railway:', isRailway);
+    console.log('Database URL exists:', Boolean(process.env.DATABASE_URL));
     // sync models with database
     await sequelize.sync({ force: true });
     console.log('☕ Database tables created');

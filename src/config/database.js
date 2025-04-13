@@ -3,7 +3,8 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const isRailway = process.env.RAILWAY_STATIC_URL !== undefined;
+const isRailway = process.env.RAILWAY === 'true' ||
+  process.env.RAILWAY_SERVICE_ID !== undefined;
 
 const SCHEMA_NAME = 'coffee_shop_schema'
 
@@ -12,7 +13,16 @@ const { DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT } = process.env
 let sequelize;
 
 if (isRailway) {
-  sequelize = new Sequelize(process.env.DATABASE_URL, {
+  console.log('Configuring for Railway deployment');
+
+  // Get the DATABASE_URL from Railway
+  const databaseUrl = process.env.DATABASE_URL;
+
+  if (!databaseUrl) {
+    console.error('DATABASE_URL environment variable not set!');
+  }
+
+  sequelize = new Sequelize(databaseUrl, {
     dialect: 'postgres',
     dialectOptions: {
       ssl: {
