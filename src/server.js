@@ -1,6 +1,8 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const bcrypt = require('bcrypt');
+const cors = require('cors');
+
 const { testConnection, sequelize } = require('./config/database');
 const { Staff, Product } = require('./models');
 
@@ -14,6 +16,7 @@ const PORT = process.env.PORT || 3000;
 
 // middleware
 app.use(express.json())
+app.use(cors());
 
 // Routes
 app.use('/api/auth', authRoutes);
