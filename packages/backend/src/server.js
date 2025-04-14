@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
+const path = require('path');
 
 const { testConnection, sequelize } = require('./config/database');
 const { Staff, Product } = require('./models');
@@ -13,12 +14,13 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isProduction = process.env.NODE_ENV === 'production';
 
 // middleware
 app.use(express.json())
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? 'https://your-production-frontend-url.com'
+  origin: isProduction
+    ? '*' // Allow all origins in production (you can restrict this if needed)
     : 'http://localhost:3001'
 }));
 
@@ -26,17 +28,37 @@ app.use(cors({
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 
-app.get('/', (req, res) => {
-  res.send({ message: '☕ Welcome to Coffee Shop Management API!' })
-})
+// Health check endpoint for Railway
+app.get('/health', (req, res) => {
+  res.status(200).send('ok');
+});
+
+// API root
+app.get('/api', (req, res) => {
+  res.send({ message: '☕ Welcome to Coffee Shop Management API!' });
+});
+
+// Serve static frontend assets in production
+if (isProduction) {
+  const frontendPath = path.join(__dirname, '../../../packages/frontend/dist');
+  app.use(express.static(frontendPath));
+  
+  // For any other routes, serve the index.html
+  app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+      res.sendFile(path.join(frontendPath, 'index.html'));
+    }
+  });
+}
 
 // Initialise Database
 const initaliseServer = async () => {
   try {
     await testConnection();
     console.log('Environment:', process.env.NODE_ENV);
-    // console.log('Is Railway:', isRailway);
+    console.log('Running on Railway:', Boolean(process.env.RAILWAY_SERVICE_ID));
     console.log('Database URL exists:', Boolean(process.env.DATABASE_URL));
+    
     // sync models with database
     await sequelize.sync({ force: true });
     console.log('☕ Database tables created');

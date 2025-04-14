@@ -16,7 +16,7 @@ if (isRailway) {
   console.log('Configuring for Railway deployment');
 
   // Get the DATABASE_URL from Railway
-  const databaseUrl = process.env.DATABASE_URL;
+  const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 
   if (!databaseUrl) {
     console.error('DATABASE_URL environment variable not set!');
@@ -70,6 +70,9 @@ const testConnection = async () => {
   }
   catch (err) {
     console.error('❌ Database connection failed:', err);
+    if (isRailway) {
+      console.error('Make sure you have provisioned a PostgreSQL database in your Railway project');
+    }
   }
 }
 
