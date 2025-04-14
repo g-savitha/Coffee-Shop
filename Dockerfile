@@ -2,7 +2,7 @@
 # Railway expects a file named "Dockerfile" in the root of the project
 
 # Just include the railway.Dockerfile contents
-FROM node:18 AS builder
+FROM node:20 AS builder
 
 # Set working directory
 WORKDIR /app
@@ -23,7 +23,7 @@ WORKDIR /app/packages/frontend
 RUN npm run build
 
 # Create production image
-FROM node:18-slim
+FROM node:20-slim
 
 # Set working directory
 WORKDIR /app
