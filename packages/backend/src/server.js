@@ -16,7 +16,11 @@ const PORT = process.env.PORT || 3000;
 
 // middleware
 app.use(express.json())
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production'
+    ? 'https://your-production-frontend-url.com'
+    : 'http://localhost:3001'
+}));
 
 // Routes
 app.use('/api/auth', authRoutes);
