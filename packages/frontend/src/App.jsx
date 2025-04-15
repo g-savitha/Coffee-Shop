@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { isAuthenticated } from './utils/auth';
-import NavBar from './components/NavBar';
-import Login from './components/Login';
-import ProductList from './components/ProductList';
-import ProductForm from './components/ProductForm';
+import NavBar from './components/NavBar.jsx';
+import Login from './components/Login.jsx';
+import ProductList from './components/ProductList.jsx';
+import ProductForm from './components/ProductForm.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Protected route component
