@@ -23,11 +23,6 @@
     # API requests go to the backend
     handle_path /api/* {
         reverse_proxy backend:3000 {
-            # Handle WebSocket
-            transport http {
-                websocket
-            }
-            
             # Pass original headers
             header_up Host {host}
             header_up X-Real-IP {remote}
@@ -43,11 +38,6 @@
     # All other requests go to the frontend
     handle {
         reverse_proxy frontend:80 {
-            # Handle WebSocket
-            transport http {
-                websocket
-            }
-            
             # Pass original headers
             header_up Host {host}
             header_up X-Real-IP {remote}

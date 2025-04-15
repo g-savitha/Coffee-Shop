@@ -110,12 +110,23 @@ Caddy is being used as a reverse proxy in this architecture for several reasons:
 - **Modern defaults**: Sensible defaults for HTTP/2, security headers, and other best practices
 - **Lightweight**: Small Docker image size with Alpine base
 - **Zero-downtime reloads**: Configuration can be changed without dropping connections
+- **WebSocket Support**: Built-in native WebSocket support without special configuration
 
 In our setup, Caddy serves two key purposes:
 1. The frontend service uses Caddy to serve static React files
 2. The proxy service uses Caddy to route traffic between services:
    - `/api/*` requests are forwarded to the backend service
    - All other requests are forwarded to the frontend service
+
+### WebSocket Handling
+
+Caddy v2 handles WebSockets automatically without requiring any special configuration. When Caddy detects a WebSocket upgrade request, it:
+
+1. Recognizes the WebSocket headers (`Connection: Upgrade`, `Upgrade: websocket`)
+2. Properly manages the upgrade handshake
+3. Transparently proxies the WebSocket connection
+
+This simplifies configuration significantly compared to other web servers that require explicit WebSocket configuration blocks.
 
 ## Troubleshooting
 

@@ -24,6 +24,17 @@ This proxy routes traffic between services:
 - **Modern defaults**: Sensible defaults for HTTP/2, security headers, etc.
 - **Lightweight**: Small Docker image size (Alpine-based)
 
+## WebSocket Support
+
+Caddy v2 has built-in WebSocket support without requiring any special configuration. 
+WebSocket connections are automatically detected and proxied correctly. Caddy will:
+
+1. Detect the WebSocket upgrade request (`Connection: Upgrade`, `Upgrade: websocket`)
+2. Handle the upgrade handshake properly
+3. Proxy the WebSocket connection transparently
+
+This makes Caddy an excellent choice for applications that use WebSockets.
+
 ## Public URL
 
 This is the only service that needs a public URL. When deployed, users will access your application through this service's domain. 
