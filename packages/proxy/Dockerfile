@@ -1,10 +1,10 @@
-FROM nginx:alpine
+FROM caddy:2-alpine
 
-# Copy nginx configuration directly
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy Caddyfile configuration
+COPY Caddyfile /etc/caddy/Caddyfile
 
 # Expose port
 EXPOSE 80
 
-# Start Nginx directly (no custom entrypoint needed)
-CMD ["nginx", "-g", "daemon off;"] 
+# Start Caddy
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"] 

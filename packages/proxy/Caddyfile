@@ -1,0 +1,62 @@
+# Basic Caddy configuration
+# This replaces the Nginx configuration with equivalent Caddy settings
+
+:80 {
+    # Log to stdout for Railway logging
+    log {
+        output stdout
+        format json
+    }
+    
+    # Health check endpoint for Railway
+    handle /health {
+        respond "ok" 200 {
+            close
+        }
+    }
+    
+    # Debug info endpoint
+    handle /debug {
+        respond "Proxy server is running" 200
+    }
+    
+    # API requests go to the backend
+    handle_path /api/* {
+        reverse_proxy backend:3000 {
+            # Handle WebSocket
+            transport http {
+                websocket
+            }
+            
+            # Pass original headers
+            header_up Host {host}
+            header_up X-Real-IP {remote}
+            header_up X-Forwarded-For {remote}
+            header_up X-Forwarded-Proto {scheme}
+            
+            # Set longer timeouts for API connections
+            dial_timeout 60s
+            timeout 60s
+        }
+    }
+    
+    # All other requests go to the frontend
+    handle {
+        reverse_proxy frontend:80 {
+            # Handle WebSocket
+            transport http {
+                websocket
+            }
+            
+            # Pass original headers
+            header_up Host {host}
+            header_up X-Real-IP {remote}
+            header_up X-Forwarded-For {remote}
+            header_up X-Forwarded-Proto {scheme}
+            
+            # Set longer timeouts for frontend connections
+            dial_timeout 60s
+            timeout 60s
+        }
+    }
+} 

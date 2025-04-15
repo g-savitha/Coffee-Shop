@@ -16,17 +16,17 @@ COPY . /app/frontend
 WORKDIR /app/frontend
 RUN npm run build
 
-# Use nginx for serving the frontend
-FROM nginx:alpine
+# Use Caddy for serving the frontend
+FROM caddy:2-alpine
 
-# Copy built frontend assets to nginx
-COPY --from=builder /app/frontend/dist /usr/share/nginx/html
+# Copy built frontend assets to Caddy's site directory
+COPY --from=builder /app/frontend/dist /srv
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy Caddyfile configuration
+COPY Caddyfile /etc/caddy/Caddyfile
 
 # Expose port
 EXPOSE 80
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"] 
+# Start Caddy
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"] 

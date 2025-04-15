@@ -1,6 +1,6 @@
 # Coffee Shop Proxy Service
 
-This directory contains the Nginx proxy configuration and Dockerfile for deploying on Railway.
+This directory contains the Caddy proxy configuration and Dockerfile for deploying on Railway.
 
 ## Deployment
 
@@ -16,6 +16,13 @@ This directory contains the Nginx proxy configuration and Dockerfile for deployi
 This proxy routes traffic between services:
 - `/api/*` requests go to the backend service
 - All other requests go to the frontend service
+
+## Benefits of Using Caddy
+
+- **Simpler Configuration**: Caddy's configuration is more straightforward than Nginx
+- **Automatic HTTPS**: Caddy automatically obtains and renews SSL certificates
+- **Modern defaults**: Sensible defaults for HTTP/2, security headers, etc.
+- **Lightweight**: Small Docker image size (Alpine-based)
 
 ## Public URL
 

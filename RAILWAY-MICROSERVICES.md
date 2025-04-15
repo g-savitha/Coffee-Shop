@@ -7,8 +7,8 @@ This guide explains how to deploy your Coffee Shop application as separate micro
 We'll be deploying 3 separate services on Railway:
 
 1. **Backend Service** - Node.js API server (in `packages/backend`)
-2. **Frontend Service** - React application served by Nginx (in `packages/frontend`)
-3. **Proxy Service** - Nginx gateway that routes traffic between frontend and backend (in `packages/proxy`)
+2. **Frontend Service** - React application served by Caddy (in `packages/frontend`)
+3. **Proxy Service** - Caddy gateway that routes traffic between frontend and backend (in `packages/proxy`)
 
 ## Prerequisites
 
@@ -31,10 +31,11 @@ Your monorepo is already organized in a way that works perfectly for microservic
     │   └── ... (backend files)
     ├── frontend/
     │   ├── Dockerfile
+    │   ├── Caddyfile
     │   └── ... (frontend files)
     └── proxy/
         ├── Dockerfile
-        ├── nginx.conf
+        ├── Caddyfile
         └── ... (proxy files)
 ```
 
@@ -99,21 +100,20 @@ If you prefer to deploy from the root of your repository:
    - Go to the "Settings" tab
    - Under "Domains", generate a Railway domain or add your custom domain
 
-## About Nginx as a Proxy
+## About Caddy as a Proxy
 
-Nginx is being used as a reverse proxy in this architecture for several reasons:
+Caddy is being used as a reverse proxy in this architecture for several reasons:
 
-**Advantages of Nginx:**
-- Very high performance and battle-tested
-- Widely used in production environments with a large community
-- Excellent for routing traffic between microservices
-- Extremely lightweight (Alpine image is only ~7MB)
-- Highly configurable for complex routing needs
-- Efficient static file serving capability
+**Advantages of Caddy:**
+- **Simple Configuration**: Caddy's configuration is much more straightforward than Nginx or other alternatives
+- **Automatic HTTPS**: Caddy automatically obtains and renews SSL certificates
+- **Modern defaults**: Sensible defaults for HTTP/2, security headers, and other best practices
+- **Lightweight**: Small Docker image size with Alpine base
+- **Zero-downtime reloads**: Configuration can be changed without dropping connections
 
-In our setup, Nginx serves two key purposes:
-1. The frontend service uses Nginx to serve static React files
-2. The proxy service uses Nginx to route traffic between services:
+In our setup, Caddy serves two key purposes:
+1. The frontend service uses Caddy to serve static React files
+2. The proxy service uses Caddy to route traffic between services:
    - `/api/*` requests are forwarded to the backend service
    - All other requests are forwarded to the frontend service
 
