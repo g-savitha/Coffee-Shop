@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { logout, getUser } from '../utils/auth';
+import { logout, getUser } from '../utils/auth.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const NavBar = () => {

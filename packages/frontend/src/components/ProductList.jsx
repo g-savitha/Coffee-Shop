@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import api from '../utils/api';
-import { getUser } from '../utils/auth';
+import api from '../utils/api.jsx';
+import { getUser } from '../utils/auth.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ProductList = () => {

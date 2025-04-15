@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { login } from '../utils/auth';
+import { login } from '../utils/auth.jsx';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 

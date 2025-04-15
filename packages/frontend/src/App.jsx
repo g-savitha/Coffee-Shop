@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { isAuthenticated } from './utils/auth';
+import { isAuthenticated } from './utils/auth.jsx';
 import NavBar from './components/NavBar.jsx';
 import Login from './components/Login.jsx';
 import ProductList from './components/ProductList.jsx';
