@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout, getUser } from '../utils/auth.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -22,11 +23,20 @@ const NavBar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <Link className="nav-link" to="/products">Products</Link>
+              <Link className="nav-link" to="/roles-info">
+                <i className="bi bi-info-circle me-1"></i> Roles & Permissions
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/products">
+                <i className="bi bi-cup-hot me-1"></i> Products
+              </Link>
             </li>
             {user && (user.role === 'owner' || user.role === 'store_manager') && (
               <li className="nav-item">
-                <Link className="nav-link" to="/add-product">Add Product</Link>
+                <Link className="nav-link" to="/add-product">
+                  <i className="bi bi-plus-circle me-1"></i> Add Product
+                </Link>
               </li>
             )}
           </ul>
@@ -35,16 +45,21 @@ const NavBar = () => {
               <>
                 <li className="nav-item">
                   <span className="nav-link">
-                    Logged in as: {user.username} ({user.role})
+                    <i className="bi bi-person-badge me-1"></i> 
+                    {user.username} ({user.role})
                   </span>
                 </li>
                 <li className="nav-item">
-                  <button className="btn btn-outline-light" onClick={handleLogout}>Logout</button>
+                  <button className="btn btn-outline-light" onClick={handleLogout}>
+                    <i className="bi bi-box-arrow-right me-1"></i> Logout
+                  </button>
                 </li>
               </>
             ) : (
               <li className="nav-item">
-                <Link className="nav-link" to="/login">Login</Link>
+                <Link className="nav-link" to="/login">
+                  <i className="bi bi-box-arrow-in-right me-1"></i> Login
+                </Link>
               </li>
             )}
           </ul>

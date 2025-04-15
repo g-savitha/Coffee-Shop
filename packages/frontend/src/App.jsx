@@ -5,6 +5,7 @@ import NavBar from './components/NavBar.jsx';
 import Login from './components/Login.jsx';
 import ProductList from './components/ProductList.jsx';
 import ProductForm from './components/ProductForm.jsx';
+import RolesInfo from './components/RolesInfo.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Protected route component
@@ -22,6 +23,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Navigate to="/products" />} />
+        <Route path="/roles-info" element={<RolesInfo />} />
 
         <Route path="/products" element={
           <ProtectedRoute>

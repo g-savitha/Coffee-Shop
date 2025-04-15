@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { login } from '../utils/auth.jsx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -58,9 +59,18 @@ const Login = () => {
                   <button type="submit" className="btn btn-primary">Login</button>
                 </div>
               </form>
+              
+              <div className="mt-4 text-center">
+                <Link to="/roles-info" className="btn btn-outline-info btn-sm">
+                  <i className="bi bi-info-circle me-1"></i> View Roles & Permissions Info
+                </Link>
+              </div>
             </div>
             <div className="card-footer text-muted">
-              <small>Available users: owner/owner123, manager/manager123, shift_lead/shift123, barista/barista123</small>
+              <small>
+                <strong>Test Accounts:</strong> Try different roles with varying permissions<br />
+                owner/owner123, manager/manager123, shift_lead/shift123, barista/barista123
+              </small>
             </div>
           </div>
         </div>
