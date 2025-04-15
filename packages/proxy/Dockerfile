@@ -1,14 +1,28 @@
 FROM nginx:alpine
 
 # Install bash and gettext for environment variable substitution
-RUN apk add --no-cache bash gettext
+RUN apk add --no-cache bash
 
-# Copy nginx proxy configuration
-# The .template files in this directory are automatically processed by the nginx image
-COPY nginx.conf /etc/nginx/templates/default.conf.template
+# Create a custom entrypoint script
+RUN echo '#!/bin/sh\n\
+# Export environment variables with ENV_ prefix for Nginx\n\
+env | while IFS= read -r line; do\n\
+  if [[ $line == BACKEND_* ]] || [[ $line == FRONTEND_* ]]; then\n\
+    name=$(echo $line | cut -d= -f1)\n\
+    value=$(echo $line | cut -d= -f2-)\n\
+    export "ENV_$name=$value"\n\
+  fi\n\
+done\n\
+\n\
+# Start Nginx\n\
+exec nginx -g "daemon off;"\n\
+' > /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port
 EXPOSE 80
 
-# The standard nginx image CMD will start the server
-CMD ["nginx", "-g", "daemon off;"] 
+# Start the custom entrypoint
+CMD ["/docker-entrypoint.sh"] 
