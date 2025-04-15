@@ -1,39 +1,105 @@
 # Quick Start: Railway Microservices Deployment
 
-## Step 1: Deploy Backend Service
+## Approach 1: Deploy Using Subdirectories
+
+### Step 1: Prepare Repository Structure
+
+Reorganize your repository into subdirectories:
+
+```
+/
+├── backend/
+│   ├── Dockerfile       # Rename from backend.Dockerfile
+│   └── ... (backend files)
+├── frontend/
+│   ├── Dockerfile       # Rename from frontend.Dockerfile
+│   └── ... (frontend files)
+└── proxy/
+    ├── Dockerfile       # Rename from proxy.Dockerfile
+    ├── nginx.conf
+    └── ... (proxy files)
+```
+
+### Step 2: Deploy Backend Service
 
 1. Navigate to your Railway project in the dashboard
-2. Click "New Service" > "Deploy from GitHub" (or "Docker Image")
+2. Click "New Service" > "Deploy from GitHub" 
 3. Name it "coffee-shop-backend"
 4. Configure:
-   - Root Directory: `/`
-   - Dockerfile Path: `backend.Dockerfile`
+   - Source Directory: `/backend`
+   - Select "Docker" as the deployment method
 5. Set variables:
    - `JWT_SECRET=1a4ecab4992e0a9f9f34c171906a614efe30c1916c55edc818d9a534a61141c7`
    - `NODE_ENV=production`
    - `PORT=3000`
 6. Link to your PostgreSQL database service
 
-## Step 2: Deploy Frontend Service
+### Step 3: Deploy Frontend Service
 
-1. Click "New Service" > "Deploy from GitHub" (or "Docker Image")
+1. Click "New Service" > "Deploy from GitHub"
 2. Name it "coffee-shop-frontend"
 3. Configure:
-   - Root Directory: `/`
-   - Dockerfile Path: `frontend.Dockerfile`
+   - Source Directory: `/frontend`
+   - Select "Docker" as the deployment method
 
-## Step 3: Deploy Nginx Proxy Service
+### Step 4: Deploy Nginx Proxy Service
 
-1. Click "New Service" > "Deploy from GitHub" (or "Docker Image")
+1. Click "New Service" > "Deploy from GitHub"
 2. Name it "coffee-shop-proxy"
 3. Configure:
-   - Root Directory: `/`
-   - Dockerfile Path: `proxy.Dockerfile`
+   - Source Directory: `/proxy`
+   - Select "Docker" as the deployment method
 4. Generate a domain for the proxy service:
    - Go to the "Settings" tab
    - Under "Domains", generate a Railway domain or add your custom domain
 
-## Step 4: Test Your Deployment
+## Approach 2: Deploy Using Docker Build Configuration
+
+### Step 1: Keep Files as They Are
+
+Maintain the current repository structure with separate Dockerfiles.
+
+### Step 2: Deploy Backend Service
+
+1. Navigate to your Railway project
+2. Click "New Service" > "Deploy Empty Service"
+3. In the service settings:
+   - Go to "Settings" tab
+   - Under "Service Settings" find "Build & Deploy"
+   - Click "Edit" in the "Builder" section
+   - Select "Docker"
+   - In "Docker Build Options" add:
+     - Dockerfile path: `backend.Dockerfile`
+4. Set environment variables:
+   - `JWT_SECRET=1a4ecab4992e0a9f9f34c171906a614efe30c1916c55edc818d9a534a61141c7`
+   - `NODE_ENV=production`
+   - `PORT=3000`
+5. Link to your PostgreSQL database service
+
+### Step 3: Deploy Frontend Service
+
+1. Click "New Service" > "Deploy Empty Service"
+2. In the service settings:
+   - Go to "Settings" tab
+   - Under "Service Settings" find "Build & Deploy"
+   - Click "Edit" in the "Builder" section
+   - Select "Docker" 
+   - In "Docker Build Options" add:
+     - Dockerfile path: `frontend.Dockerfile`
+
+### Step 4: Deploy Nginx Proxy Service
+
+1. Click "New Service" > "Deploy Empty Service"
+2. In the service settings:
+   - Go to "Settings" tab
+   - Under "Service Settings" find "Build & Deploy"
+   - Click "Edit" in the "Builder" section
+   - Select "Docker"
+   - In "Docker Build Options" add:
+     - Dockerfile path: `proxy.Dockerfile`
+3. Generate a domain for the proxy service in the "Settings" tab
+
+## Testing Your Deployment
 
 1. Access your application via the proxy service domain
 2. Verify that:

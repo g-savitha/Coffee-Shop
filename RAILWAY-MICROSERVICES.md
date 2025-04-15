@@ -19,60 +19,95 @@ We'll be deploying 3 separate services on Railway:
    ```
 3. Git and Docker installed on your local machine
 
+## Deployment Methods
+
+Railway supports two main approaches for deploying custom Docker-based applications:
+
+### Approach 1: Using Subdirectories
+
+This approach requires reorganizing your repository to have separate directories with standard `Dockerfile` names.
+
+1. **Repository Structure:**
+   ```
+   /
+   ├── backend/
+   │   ├── Dockerfile       # Renamed from backend.Dockerfile
+   │   └── ... (backend files)
+   ├── frontend/
+   │   ├── Dockerfile       # Renamed from frontend.Dockerfile
+   │   └── ... (frontend files)
+   └── proxy/
+       ├── Dockerfile       # Renamed from proxy.Dockerfile
+       ├── nginx.conf
+       └── ... (proxy files)
+   ```
+
+2. **When creating a service** in Railway, specify the source directory for each service.
+
+### Approach 2: Using Docker Build Configuration
+
+This approach allows you to keep the current file structure and specify custom Dockerfile paths.
+
+1. **Keep current repository structure** with separate Dockerfiles.
+
+2. **Configure the Docker builder** in Railway's service settings to use your specific Dockerfile.
+
 ## Deployment Steps
 
-### Step 1: Create Backend Service
+### Step 1: Backend Service
 
-1. In your Railway project, create a new service:
-   ```bash
-   railway add
-   ```
-   - Select "Docker Image"
+1. In your Railway project dashboard:
+   - Click "New Service" > "Deploy Empty Service" (or from GitHub)
    - Name it "coffee-shop-backend"
-   - Configure to use `backend.Dockerfile`
 
-2. Set up environment variables:
-   - Through the Railway Dashboard, add:
-     - `JWT_SECRET=1a4ecab4992e0a9f9f34c171906a614efe30c1916c55edc818d9a534a61141c7`
-     - `NODE_ENV=production`
-     - `PORT=3000`
-     - Connect the PostgreSQL database to this service through the Railway UI
+2. Configure the Docker builder:
+   - Go to the "Settings" tab
+   - Under "Service Settings" > "Build & Deploy"
+   - Click "Edit" in the "Builder" section
+   - Select "Docker"
+   - In "Docker Build Options" add:
+     - Dockerfile path: `backend.Dockerfile` (or use `/backend/Dockerfile` if using Approach 1)
 
-### Step 2: Create Frontend Service
+3. Set environment variables:
+   - `JWT_SECRET=1a4ecab4992e0a9f9f34c171906a614efe30c1916c55edc818d9a534a61141c7`
+   - `NODE_ENV=production`
+   - `PORT=3000`
 
-1. In your Railway project, create a new service:
-   ```bash
-   railway add
-   ```
-   - Select "Docker Image"
+4. Link the PostgreSQL database:
+   - Go to "Variables" tab
+   - Click "Add from service" to link your database connection string
+
+### Step 2: Frontend Service
+
+1. Create a new service:
+   - Click "New Service" > "Deploy Empty Service" (or from GitHub)
    - Name it "coffee-shop-frontend"
-   - Configure to use `frontend.Dockerfile`
 
-2. No additional environment variables required for the frontend
+2. Configure the Docker builder:
+   - Go to the "Settings" tab
+   - Under "Service Settings" > "Build & Deploy"
+   - Click "Edit" in the "Builder" section
+   - Select "Docker"
+   - In "Docker Build Options" add:
+     - Dockerfile path: `frontend.Dockerfile` (or use `/frontend/Dockerfile` if using Approach 1)
 
-### Step 3: Create Proxy Service
+### Step 3: Proxy Service
 
-1. In your Railway project, create a new service:
-   ```bash
-   railway add
-   ```
-   - Select "Docker Image"
+1. Create a new service:
+   - Click "New Service" > "Deploy Empty Service" (or from GitHub)
    - Name it "coffee-shop-proxy"
-   - Configure to use `proxy.Dockerfile`
 
-2. Set up a custom domain in Railway:
-   ```bash
-   railway domain
-   ```
-   - Choose to either add a custom domain or generate a Railway provided domain
+2. Configure the Docker builder:
+   - Go to the "Settings" tab
+   - Under "Service Settings" > "Build & Deploy"
+   - Click "Edit" in the "Builder" section
+   - Select "Docker"
+   - In "Docker Build Options" add:
+     - Dockerfile path: `proxy.Dockerfile` (or use `/proxy/Dockerfile` if using Approach 1)
 
-### Step 4: Deploy All Services
-
-Deploy all services:
-
-```bash
-railway up
-```
+3. Set up a custom domain:
+   - Go to the "Settings" tab
+   - Under "Domains", generate a Railway domain or add your custom domain
 
 ## About Nginx as a Proxy
 
