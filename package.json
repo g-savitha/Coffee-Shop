@@ -1,20 +1,24 @@
 {
-  "name": "coffee-shop-monorepo",
+  "name": "coffee-shop-backend",
   "version": "1.0.0",
-  "description": "Coffee Shop application with RBAC and ABAC",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
+  "description": "Coffee Shop Backend Service with RBAC and ABAC",
   "scripts": {
-    "start:backend": "cd packages/backend && npm start",
-    "start:frontend": "cd packages/frontend && npm run preview",
-    "dev:backend": "cd packages/backend && npm run dev",
-    "dev:frontend": "cd packages/frontend && npm run dev",
-    "build:frontend": "cd packages/frontend && npm run build",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+    "start": "node ./src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": ["coffee-shop", "backend", "rbac", "abac"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.14.1",
+    "sequelize": "^6.37.7"
   },
   "devDependencies": {
-    "concurrently": "^8.0.1"
+    "nodemon": "^3.1.9"
   }
 }
