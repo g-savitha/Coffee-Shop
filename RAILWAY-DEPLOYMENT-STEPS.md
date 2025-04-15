@@ -1,32 +1,16 @@
 # Quick Start: Railway Microservices Deployment
 
-## Approach 1: Deploy Using Subdirectories
+## Deploying Using Packages Directory Structure
 
-### Step 1: Prepare Repository Structure
+This guide shows how to deploy your monorepo directly from your existing packages structure.
 
-Reorganize your repository into subdirectories:
-
-```
-/
-├── backend/
-│   ├── Dockerfile       # Rename from backend.Dockerfile
-│   └── ... (backend files)
-├── frontend/
-│   ├── Dockerfile       # Rename from frontend.Dockerfile
-│   └── ... (frontend files)
-└── proxy/
-    ├── Dockerfile       # Rename from proxy.Dockerfile
-    ├── nginx.conf
-    └── ... (proxy files)
-```
-
-### Step 2: Deploy Backend Service
+### Step 1: Deploy Backend Service
 
 1. Navigate to your Railway project in the dashboard
 2. Click "New Service" > "Deploy from GitHub" 
 3. Name it "coffee-shop-backend"
 4. Configure:
-   - Source Directory: `/backend`
+   - Source Directory: `packages/backend`
    - Select "Docker" as the deployment method
 5. Set variables:
    - `JWT_SECRET=1a4ecab4992e0a9f9f34c171906a614efe30c1916c55edc818d9a534a61141c7`
@@ -34,70 +18,71 @@ Reorganize your repository into subdirectories:
    - `PORT=3000`
 6. Link to your PostgreSQL database service
 
-### Step 3: Deploy Frontend Service
+### Step 2: Deploy Frontend Service
 
 1. Click "New Service" > "Deploy from GitHub"
 2. Name it "coffee-shop-frontend"
 3. Configure:
-   - Source Directory: `/frontend`
+   - Source Directory: `packages/frontend`
    - Select "Docker" as the deployment method
 
-### Step 4: Deploy Nginx Proxy Service
+### Step 3: Deploy Nginx Proxy Service
 
 1. Click "New Service" > "Deploy from GitHub"
 2. Name it "coffee-shop-proxy"
 3. Configure:
-   - Source Directory: `/proxy`
+   - Source Directory: `packages/proxy`
    - Select "Docker" as the deployment method
 4. Generate a domain for the proxy service:
    - Go to the "Settings" tab
    - Under "Domains", generate a Railway domain or add your custom domain
 
-## Approach 2: Deploy Using Docker Build Configuration
+## Alternative Approach: Using Docker Build Configuration
 
-### Step 1: Keep Files as They Are
+If you prefer not to deploy from subdirectories, you can use Railway's Docker Build Configuration:
 
-Maintain the current repository structure with separate Dockerfiles.
-
-### Step 2: Deploy Backend Service
+### Step 1: Deploy Backend Service
 
 1. Navigate to your Railway project
 2. Click "New Service" > "Deploy Empty Service"
-3. In the service settings:
+3. Push your code to the service's Git repository
+4. In the service settings:
    - Go to "Settings" tab
    - Under "Service Settings" find "Build & Deploy"
    - Click "Edit" in the "Builder" section
    - Select "Docker"
    - In "Docker Build Options" add:
-     - Dockerfile path: `backend.Dockerfile`
+     - Dockerfile path: `packages/backend/Dockerfile`
 4. Set environment variables:
    - `JWT_SECRET=1a4ecab4992e0a9f9f34c171906a614efe30c1916c55edc818d9a534a61141c7`
    - `NODE_ENV=production`
    - `PORT=3000`
 5. Link to your PostgreSQL database service
 
-### Step 3: Deploy Frontend Service
+### Step 2: Deploy Frontend Service
 
 1. Click "New Service" > "Deploy Empty Service"
-2. In the service settings:
+2. Push your code to the service's Git repository
+3. In the service settings:
    - Go to "Settings" tab
    - Under "Service Settings" find "Build & Deploy"
    - Click "Edit" in the "Builder" section
    - Select "Docker" 
    - In "Docker Build Options" add:
-     - Dockerfile path: `frontend.Dockerfile`
+     - Dockerfile path: `packages/frontend/Dockerfile`
 
-### Step 4: Deploy Nginx Proxy Service
+### Step 3: Deploy Nginx Proxy Service
 
 1. Click "New Service" > "Deploy Empty Service"
-2. In the service settings:
+2. Push your code to the service's Git repository
+3. In the service settings:
    - Go to "Settings" tab
    - Under "Service Settings" find "Build & Deploy"
    - Click "Edit" in the "Builder" section
    - Select "Docker"
    - In "Docker Build Options" add:
-     - Dockerfile path: `proxy.Dockerfile`
-3. Generate a domain for the proxy service in the "Settings" tab
+     - Dockerfile path: `packages/proxy/Dockerfile`
+4. Generate a domain for the proxy service in the "Settings" tab
 
 ## Testing Your Deployment
 

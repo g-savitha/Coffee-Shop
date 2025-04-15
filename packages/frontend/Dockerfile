@@ -1,19 +1,33 @@
-FROM node:18 as build
+FROM node:20 AS builder
 
+# Set working directory
 WORKDIR /app
 
+# Copy package.json files
 COPY package*.json ./
 COPY packages/frontend/package*.json packages/frontend/
 
+# Install dependencies
 RUN npm install
 
-COPY . .
+# Copy frontend source
+COPY packages/frontend /app/packages/frontend
 
+# Build frontend
 WORKDIR /app/packages/frontend
-
 RUN npm run build
 
+# Use nginx for serving the frontend
 FROM nginx:alpine
-COPY --from=build /app/packages/frontend/dist /usr/share/nginx/html
+
+# Copy built frontend assets to nginx
+COPY --from=builder /app/packages/frontend/dist /usr/share/nginx/html
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"] 

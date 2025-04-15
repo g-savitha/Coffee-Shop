@@ -1,10 +1,10 @@
 # Coffee Shop Proxy Service
 
-This directory contains the Dockerfile for deploying the Coffee Shop Nginx proxy service on Railway.
+This directory contains the Nginx proxy configuration and Dockerfile for deploying on Railway.
 
 ## Deployment
 
-1. In Railway, create a new service and point to this directory
+1. In Railway, create a new service and point to this directory (`packages/proxy`)
 2. Select Docker as the deployment method
 3. No specific environment variables are required
 4. Configure a domain for public access:
