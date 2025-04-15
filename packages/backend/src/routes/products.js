@@ -15,38 +15,37 @@ router.get('/', authenticate, async (req, res) => {
   catch (error) {
     res.status(500).json({ message: 'Error fetching products', error: error.message });
   }
-})
+});
 
 // get a single product
-
 router.get('/:id', authenticate, async (req, res) => {
   try {
     const product = await Product.findByPk(req.params.id);
 
     if (!product) {
-      res.status(404).json({ message: 'Product not found' })
+      return res.status(404).json({ message: 'Product not found' });
     }
-    res.json(product)
+    res.json(product);
   }
   catch (error) {
     res.status(500).json({ message: 'Error fetching product', error: error.message });
   }
-})
+});
 
 // Create a product: RBAC (Only managers and creators)
-
 router.post('/', authenticate, checkRole('manage_products'), async (req, res) => {
   try {
-    const { name, price, category, specialityItem, limitedTimeOffer } = req.body;
+    const { name, price, category, specialtyItem, limitedTimeOffer } = req.body;
 
     const product = await Product.create({
       name,
       price,
       category,
-      specialityItem: specialityItem || false,
+      specialtyItem: specialtyItem || false,
       limitedTimeOffer: limitedTimeOffer || false,
+      availability: true,
       createdBy: req.staff.id
-    })
+    });
 
     res.status(201).json(product);
   }
@@ -56,7 +55,7 @@ router.post('/', authenticate, checkRole('manage_products'), async (req, res) =>
 });
 
 // Update Product (ABAC: combination of policies)
-router.put("/:id", authenticate, checkAttributes((staff, resource, action, env) => {
+router.put('/:id', authenticate, checkAttributes((staff, resource, action, env) => {
   // combine multiple policies
   const hasPermissionByRole = ['owner', 'store_manager', 'shift_manager'].includes(staff.role);
   const hasTrainingRequired = policies.hasTrainingForSpecialtyItems(staff, resource);
@@ -65,7 +64,7 @@ router.put("/:id", authenticate, checkAttributes((staff, resource, action, env) 
   const isCreator = staff.id === resource.createdBy;
 
   // For specialty items: need higher role OR training + creator status
-  if (resource.specialityItem) {
+  if (resource.specialtyItem) {
     return (staff.role === 'owner' || staff.role === 'store_manager') || (hasTrainingRequired && isCreator && isWorkingShift);
   }
 
@@ -88,8 +87,7 @@ router.put("/:id", authenticate, checkAttributes((staff, resource, action, env) 
       const { name, price, category, availability } = req.body;
 
       // Update product
-
-      await Product.update({
+      await product.update({
         name: name || product.name,
         price: price || product.price,
         category: category || product.category,
@@ -101,7 +99,7 @@ router.put("/:id", authenticate, checkAttributes((staff, resource, action, env) 
     catch (error) {
       res.status(500).json({ message: 'Error updating product', error: error.message });
     }
-  })
+  });
 
 // Update availability only (RBAC: all staff can do this)
 router.patch('/:id/availability', authenticate, checkRole('update_availability'), async (req, res) => {
@@ -109,7 +107,7 @@ router.patch('/:id/availability', authenticate, checkRole('update_availability')
     const product = await Product.findByPk(req.params.id);
 
     if (!product) {
-      res.status(404).json({ message: `Product not found` })
+      return res.status(404).json({ message: 'Product not found' });
     }
 
     const { availability } = req.body;
@@ -119,7 +117,7 @@ router.patch('/:id/availability', authenticate, checkRole('update_availability')
     }
 
     // Update availability only
-    await Product.update({ availability })
+    await product.update({ availability });
 
     res.json(product);
   }
@@ -131,10 +129,10 @@ router.patch('/:id/availability', authenticate, checkRole('update_availability')
 // Delete product (RBAC: only owners can delete)
 router.delete('/:id', authenticate, checkRole('manage_products'), async (req, res) => {
   try {
-    const product = Product.findByPk(req.params.id);
+    const product = await Product.findByPk(req.params.id);
 
     if (!product) {
-      res.status(404).json({ message: `Product Not found` })
+      return res.status(404).json({ message: 'Product not found' });
     }
 
     await product.destroy();
@@ -143,6 +141,6 @@ router.delete('/:id', authenticate, checkRole('manage_products'), async (req, re
   catch (error) {
     res.status(500).json({ message: 'Error deleting product', error: error.message });
   }
-})
+});
 
 module.exports = router;

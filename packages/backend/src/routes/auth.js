@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { Staff } = require('../models')
+const { Staff } = require('../models');
 
 const router = express.Router();
 
@@ -35,11 +35,11 @@ router.post('/login', async (req, res) => {
         role: staff.role,
         storeLocation: staff.storeLocation
       }
-    })
+    });
   }
   catch (error) {
     res.status(500).json({ message: 'Login failed', error: error.message });
   }
-})
+});
 
 module.exports = router;

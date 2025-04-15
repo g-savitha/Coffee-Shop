@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
 
 // middleware
-app.use(express.json())
+app.use(express.json());
 app.use(cors({
   origin: isProduction
     ? '*' // Allow all origins in production (you can restrict this if needed)
@@ -35,18 +35,27 @@ app.get('/health', (req, res) => {
 
 // API root
 app.get('/api', (req, res) => {
-  res.send({ message: '☕ Welcome to Coffee Shop Management API!' });
+  res.json({ message: '☕ Welcome to Coffee Shop Management API!' });
 });
 
 // Serve static frontend assets in production
 if (isProduction) {
   const frontendPath = path.join(__dirname, '../../../packages/frontend/dist');
+  
+  // Serve static files
   app.use(express.static(frontendPath));
   
-  // For any other routes, serve the index.html
-  app.get('*', (req, res) => {
+  // Specific routes for SPA navigation
+  app.get('/', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+  
+  // For any frontend routes, fallback to index.html
+  app.use((req, res, next) => {
     if (!req.path.startsWith('/api')) {
       res.sendFile(path.join(frontendPath, 'index.html'));
+    } else {
+      next();
     }
   });
 }
@@ -70,9 +79,9 @@ const initaliseServer = async () => {
     });
   }
   catch (error) {
-    console.log('❌ Failed to initialise the server', error)
+    console.log('❌ Failed to initialise the server', error);
   }
-}
+};
 
 const createInitialData = async () => {
   try {
@@ -168,11 +177,11 @@ const createInitialData = async () => {
     ];
 
     await Product.bulkCreate(products);
-    console.log('☕ Products created')
+    console.log('☕ Products created');
   }
   catch (error) {
     console.error('Error creating initial data:', error);
   }
-}
+};
 
 initaliseServer();
