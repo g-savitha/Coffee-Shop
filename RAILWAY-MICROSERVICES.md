@@ -128,6 +128,24 @@ Caddy v2 handles WebSockets automatically without requiring any special configur
 
 This simplifies configuration significantly compared to other web servers that require explicit WebSocket configuration blocks.
 
+### Caddy Configuration Notes
+
+#### Transport Options
+
+Unlike Nginx, Caddy requires transport-related options like timeouts to be placed in a `transport` block:
+
+```
+reverse_proxy example.com {
+    transport http {
+        dial_timeout 60s
+        read_timeout 30s
+        write_timeout 30s
+    }
+}
+```
+
+This structured approach makes Caddy configurations more organized and easier to understand, but it's important to note that some options can't be used directly at the `reverse_proxy` level.
+
 ## Troubleshooting
 
 If you encounter issues:

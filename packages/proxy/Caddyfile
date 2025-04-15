@@ -29,9 +29,10 @@
             header_up X-Forwarded-For {remote}
             header_up X-Forwarded-Proto {scheme}
             
-            # Set longer timeouts for API connections
-            dial_timeout 60s
-            timeout 60s
+            # Set longer timeouts via transport
+            transport http {
+                dial_timeout 60s
+            }
         }
     }
     
@@ -44,9 +45,10 @@
             header_up X-Forwarded-For {remote}
             header_up X-Forwarded-Proto {scheme}
             
-            # Set longer timeouts for frontend connections
-            dial_timeout 60s
-            timeout 60s
+            # Set longer timeouts via transport
+            transport http {
+                dial_timeout 60s
+            }
         }
     }
 } 

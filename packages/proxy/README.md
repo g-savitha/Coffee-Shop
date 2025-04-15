@@ -35,6 +35,22 @@ WebSocket connections are automatically detected and proxied correctly. Caddy wi
 
 This makes Caddy an excellent choice for applications that use WebSockets.
 
+## Timeout Configuration
+
+In Caddy v2, transport-related timeout settings must be placed within a `transport` block:
+
+```
+reverse_proxy example.com {
+    transport http {
+        dial_timeout 60s
+        read_timeout 30s
+        write_timeout 30s
+    }
+}
+```
+
+This is different from other web servers like Nginx, where timeout settings are often placed at the location level.
+
 ## Public URL
 
 This is the only service that needs a public URL. When deployed, users will access your application through this service's domain. 
