@@ -13,7 +13,8 @@ const productRoutes = require('./routes/products');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
+console.log(`Configured to use port: ${PORT}`);
 const isProduction = process.env.NODE_ENV === 'production';
 
 // middleware
@@ -21,7 +22,7 @@ app.use(express.json());
 app.use(cors({
   origin: isProduction
     ? '*' // Allow all origins in production (you can restrict this if needed)
-    : 'http://localhost:3001'
+    : 'http://localhost:3000'
 }));
 
 // Routes
@@ -63,28 +64,49 @@ if (isProduction) {
 // Initialise Database
 const initaliseServer = async () => {
   try {
-    await testConnection();
+    console.log('Starting server initialization...');
     console.log('Environment:', process.env.NODE_ENV);
     console.log('Running on Railway:', Boolean(process.env.RAILWAY_SERVICE_ID));
     console.log('Database URL exists:', Boolean(process.env.DATABASE_URL));
     
+    // Test database connection first
+    await testConnection();
+    
     // sync models with database
+    console.log('Syncing database models...');
     await sequelize.sync({ force: true });
     console.log('☕ Database tables created');
 
     // create initial Data
+    console.log('Creating initial data...');
     await createInitialData();
+    
+    // Only start the server if database initialization was successful
     app.listen(PORT, () => {
       console.log(`☕ Coffee Shop server brewing on port ${PORT}`);
     });
   }
   catch (error) {
-    console.log('❌ Failed to initialise the server', error);
+    console.error('❌ Failed to initialise the server', error);
+    if (error.parent && error.parent.code) {
+      console.error(`Error code: ${error.parent.code}`);
+    }
+    // Don't exit in development to allow for troubleshooting
+    if (process.env.NODE_ENV === 'production') {
+      process.exit(1);
+    }
   }
 };
 
 const createInitialData = async () => {
   try {
+    // Check if we already have staff members
+    const staffCount = await Staff.count();
+    if (staffCount > 0) {
+      console.log(`Found ${staffCount} existing staff members, skipping data creation`);
+      return;
+    }
+
     const staffMembers = [
       {
         username: 'owner',
