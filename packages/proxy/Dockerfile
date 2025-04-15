@@ -1,7 +1,7 @@
 FROM nginx:alpine
 
 # Copy nginx proxy configuration
-COPY proxy.nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port
 EXPOSE 80
