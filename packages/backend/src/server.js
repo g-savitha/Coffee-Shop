@@ -20,9 +20,8 @@ const isProduction = process.env.NODE_ENV === 'production';
 // middleware
 app.use(express.json());
 app.use(cors({
-  origin: isProduction
-    ? '*' // Allow all origins in production (you can restrict this if needed)
-    : 'http://localhost:3000'
+  origin: true, // Allow requests from any origin
+  credentials: true // Allow cookies and credentials
 }));
 
 // Routes
@@ -31,7 +30,18 @@ app.use('/api/products', productRoutes);
 
 // Health check endpoint for Railway
 app.get('/health', (req, res) => {
-  res.status(200).send('ok');
+  console.log('Health check requested');
+  // Return database status in health check
+  const dbStatus = sequelize.authenticate()
+    .then(() => 'connected')
+    .catch(err => `error: ${err.message}`);
+  
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    database: dbStatus,
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
 // API root
@@ -74,7 +84,9 @@ const initaliseServer = async () => {
     
     // sync models with database
     console.log('Syncing database models...');
-    await sequelize.sync({ force: true });
+    const forceSync = process.env.NODE_ENV !== 'production';
+    console.log(`Using force sync: ${forceSync}`);
+    await sequelize.sync({ force: forceSync });
     console.log('☕ Database tables created');
 
     // create initial Data
