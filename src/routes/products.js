@@ -101,6 +101,34 @@ router.put('/:id', authenticate, checkAttributes((staff, resource, action, env) 
     }
   });
 
+// Update product details only (not price) - For shift managers
+router.patch('/:id/details', authenticate, checkRole('update_products'), async (req, res) => {
+  try {
+    const product = await Product.findByPk(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    const { name, category, specialtyItem, limitedTimeOffer } = req.body;
+    
+    // Allow updating details but not price (shift managers)
+    const updates = {};
+    if (name) updates.name = name;
+    if (category) updates.category = category;
+    if (specialtyItem !== undefined) updates.specialtyItem = specialtyItem;
+    if (limitedTimeOffer !== undefined) updates.limitedTimeOffer = limitedTimeOffer;
+
+    // Update product details
+    await product.update(updates);
+
+    res.json(product);
+  }
+  catch (error) {
+    res.status(500).json({ message: 'Error updating product details', error: error.message });
+  }
+});
+
 // Update availability only (RBAC: all staff can do this)
 router.patch('/:id/availability', authenticate, checkRole('update_availability'), async (req, res) => {
   try {
@@ -126,6 +154,31 @@ router.patch('/:id/availability', authenticate, checkRole('update_availability')
   }
 });
 
+// Update product price (only owner & store manager)
+router.patch('/:id/price', authenticate, checkRole('manage_prices'), async (req, res) => {
+  try {
+    const product = await Product.findByPk(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    const { price } = req.body;
+
+    if (price === undefined) {
+      return res.status(400).json({ message: 'Price is required' });
+    }
+
+    // Update price only
+    await product.update({ price });
+
+    res.json(product);
+  }
+  catch (error) {
+    res.status(500).json({ message: 'Error updating product price', error: error.message });
+  }
+});
+
 // Delete product (RBAC: only owners can delete)
 router.delete('/:id', authenticate, checkRole('manage_products'), async (req, res) => {
   try {
@@ -140,6 +193,37 @@ router.delete('/:id', authenticate, checkRole('manage_products'), async (req, re
   }
   catch (error) {
     res.status(500).json({ message: 'Error deleting product', error: error.message });
+  }
+});
+
+// Get product report (requires view_reports permission)
+router.get('/reports/inventory', authenticate, checkRole('view_reports'), async (req, res) => {
+  try {
+    const products = await Product.findAll();
+    
+    // Generate a simple inventory report
+    const report = {
+      totalProducts: products.length,
+      availableProducts: products.filter(p => p.availability).length,
+      unavailableProducts: products.filter(p => !p.availability).length,
+      categories: {},
+      specialtyItemsCount: products.filter(p => p.specialtyItem).length,
+      limitedTimeOffersCount: products.filter(p => p.limitedTimeOffer).length,
+      generatedAt: new Date().toISOString()
+    };
+    
+    // Count products by category
+    products.forEach(product => {
+      if (!report.categories[product.category]) {
+        report.categories[product.category] = 0;
+      }
+      report.categories[product.category]++;
+    });
+    
+    res.json(report);
+  }
+  catch (error) {
+    res.status(500).json({ message: 'Error generating report', error: error.message });
   }
 });
 

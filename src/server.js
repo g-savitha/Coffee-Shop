@@ -9,6 +9,7 @@ const { Staff, Product } = require('./models');
 
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
+const staffRoutes = require('./routes/staff');
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use(cors({
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/staff', staffRoutes);
 
 // Health check endpoint for Railway
 app.get('/health', (req, res) => {
