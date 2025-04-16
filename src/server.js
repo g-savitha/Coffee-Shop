@@ -5,13 +5,11 @@ const cors = require('cors');
 const path = require('path');
 
 const { testConnection, sequelize } = require('./config/database');
-const { Staff, Product, Inventory, StoreSettings } = require('./models');
+const { Staff, Product } = require('./models');
 
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const staffRoutes = require('./routes/staff');
-const inventoryRoutes = require('./routes/inventory');
-const settingsRoutes = require('./routes/settings');
 
 dotenv.config();
 
@@ -31,8 +29,6 @@ app.use(cors({
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/staff', staffRoutes);
-app.use('/api/inventory', inventoryRoutes);
-app.use('/api/settings', settingsRoutes);
 
 // Health check endpoint for Railway
 app.get('/health', (req, res) => {
@@ -219,81 +215,8 @@ const createInitialData = async () => {
     await Product.bulkCreate(products);
     console.log('☕ Products created');
 
-    // Create initial inventory items
-    const inventoryItems = [
-      {
-        name: 'Arabica Coffee Beans',
-        category: 'Coffee Beans',
-        quantity: 25,
-        unit: 'kg',
-        unitPrice: 850,
-        supplier: 'Premium Coffee Suppliers',
-        reorderLevel: 5,
-        notes: 'Premium quality Arabica beans',
-        lastUpdatedBy: 1 // owner
-      },
-      {
-        name: 'Whole Milk',
-        category: 'Milk',
-        quantity: 50,
-        unit: 'L',
-        unitPrice: 65,
-        supplier: 'Local Dairy Farm',
-        reorderLevel: 10,
-        expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-        notes: 'Fresh whole milk',
-        lastUpdatedBy: 2 // manager
-      },
-      {
-        name: 'Vanilla Syrup',
-        category: 'Syrups',
-        quantity: 8,
-        unit: 'L',
-        unitPrice: 320,
-        supplier: 'Flavor Creations',
-        reorderLevel: 2,
-        notes: 'Popular flavor for lattes',
-        lastUpdatedBy: 2 // manager
-      },
-      {
-        name: 'Paper Cups 12oz',
-        category: 'Cups',
-        quantity: 1000,
-        unit: 'units',
-        unitPrice: 3.5,
-        supplier: 'EcoCup Distributors',
-        reorderLevel: 200,
-        notes: 'Environmentally friendly cups',
-        lastUpdatedBy: 1 // owner
-      },
-      {
-        name: 'Cleaning Solution',
-        category: 'Cleaning Supplies',
-        quantity: 5,
-        unit: 'L',
-        unitPrice: 250,
-        supplier: 'Clean Solutions Inc',
-        reorderLevel: 1,
-        notes: 'For daily cleaning of equipment',
-        lastUpdatedBy: 3 // shift manager
-      }
-    ];
-
-    await Inventory.bulkCreate(inventoryItems);
-    console.log('☕ Inventory items created');
-
-    // Create default store settings
-    await StoreSettings.create({
-      storeName: 'Bangalore Coffee Shop',
-      storeAddress: '123 Coffee Street, Bangalore, India',
-      contactEmail: 'info@coffeeshop.com',
-      contactPhone: '+91 9876543210',
-      lastUpdatedBy: 1 // owner
-    });
-    console.log('☕ Default store settings created');
-
   } catch (error) {
-    console.error('Failed to create initial data:', error);
+    console.error('❌ Failed to create initial data', error);
   }
 };
 

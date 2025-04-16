@@ -196,35 +196,4 @@ router.delete('/:id', authenticate, checkRole('manage_products'), async (req, re
   }
 });
 
-// Get product report (requires view_reports permission)
-router.get('/reports/inventory', authenticate, checkRole('view_reports'), async (req, res) => {
-  try {
-    const products = await Product.findAll();
-    
-    // Generate a simple inventory report
-    const report = {
-      totalProducts: products.length,
-      availableProducts: products.filter(p => p.availability).length,
-      unavailableProducts: products.filter(p => !p.availability).length,
-      categories: {},
-      specialtyItemsCount: products.filter(p => p.specialtyItem).length,
-      limitedTimeOffersCount: products.filter(p => p.limitedTimeOffer).length,
-      generatedAt: new Date().toISOString()
-    };
-    
-    // Count products by category
-    products.forEach(product => {
-      if (!report.categories[product.category]) {
-        report.categories[product.category] = 0;
-      }
-      report.categories[product.category]++;
-    });
-    
-    res.json(report);
-  }
-  catch (error) {
-    res.status(500).json({ message: 'Error generating report', error: error.message });
-  }
-});
-
 module.exports = router;
