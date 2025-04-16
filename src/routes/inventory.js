@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { authenticate, checkRole } = require('../middleware/auth');
+const { authenticate } = require('../middleware/auth');
+const { checkRole } = require('../middleware/rbac');
 const { Inventory } = require('../models');
 
 // Get all inventory items
@@ -27,9 +28,9 @@ router.get('/:id', authenticate, async (req, res) => {
 });
 
 // Create a new inventory item
-router.post('/', authenticate, checkRole(['owner', 'store_manager', 'shift_manager']), async (req, res) => {
+router.post('/', authenticate, checkRole('manage_inventory'), async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.staff.id;
     const newItem = await Inventory.create({
       ...req.body,
       lastUpdatedBy: userId
@@ -41,9 +42,9 @@ router.post('/', authenticate, checkRole(['owner', 'store_manager', 'shift_manag
 });
 
 // Update an inventory item
-router.put('/:id', authenticate, checkRole(['owner', 'store_manager', 'shift_manager']), async (req, res) => {
+router.put('/:id', authenticate, checkRole('manage_inventory'), async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.staff.id;
     const item = await Inventory.findByPk(req.params.id);
     
     if (!item) {
@@ -62,7 +63,7 @@ router.put('/:id', authenticate, checkRole(['owner', 'store_manager', 'shift_man
 });
 
 // Delete an inventory item
-router.delete('/:id', authenticate, checkRole(['owner', 'store_manager']), async (req, res) => {
+router.delete('/:id', authenticate, checkRole('manage_inventory'), async (req, res) => {
   try {
     const item = await Inventory.findByPk(req.params.id);
     

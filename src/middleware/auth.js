@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const { Staff } = require('../models');
-const { checkRole } = require('./rbac');
 
 // AuthN middleware
 
@@ -31,4 +30,4 @@ const authenticate = async (req, res, next) => {
   }
 }
 
-module.exports = { authenticate, checkRole };
+module.exports = { authenticate };
